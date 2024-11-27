@@ -1,0 +1,24 @@
+env: docker
+migrations_path: ./migrations
+
+database:
+  host: medods-db
+  port: 5432
+  user: api-user
+  password: api333
+  name: medods
+  sslmode: disable
+  max_attempts: 5
+  attemp_timeout: 10s
+  attempt_delay: 5s
+
+http_server:
+  addr: :8080
+  timeout: 5s
+  idle_timeout: 1m
+
+auth:
+  access_token_lifetime: 1h
+  refresh_token_lifetime: 168h
+  access_secret: hajksfahskfhkashkf
+  refresh_secret: asuyfioupfhkneqwIPUH

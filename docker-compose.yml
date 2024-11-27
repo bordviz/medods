@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  medods-db:
+    image: postgres:16
+    restart: always
+    container_name: medods-db
+    environment:
+      - POSTGRES_USER=api-user
+      - POSTGRES_PASSWORD=api333
+      - POSTGRES_DB=medods
+      - POSTGRES_HOST=medods-db
+      - POSTGRES_PORT=5432
+    ports:
+      - 5432:5432
+    command:
+      - -p 5432
+    volumes:
+      - pgdata_api:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U api-user -d medods -h medods-db -p 5432'"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  medods-api:
+    build: 
+      context: .
+    container_name: medods-api
+    ports:
+      - 8080:8080
+    depends_on:
+      medods-db:
+        condition: service_healthy
+
+volumes:
+  pgdata_api:
