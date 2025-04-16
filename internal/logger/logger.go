@@ -1,24 +1,33 @@
 package logger
 
 import (
+	"fmt"
 	"log/slog"
 	"medods/internal/lib/logger/slogpretty"
 	"os"
 )
 
-func NewLogger(env string) *slog.Logger {
+func NewLogger(env string) (*slog.Logger, error) {
 	var log *slog.Logger
 
 	switch env {
-	case "docker":
+	case "test":
+		log = slog.New(slog.DiscardHandler)
+	case "local":
+		log = setupPrettyLogger()
+	case "dev":
+		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		}))
+	case "prod":
 		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelInfo,
 		}))
 	default:
-		log = setupPrettyLogger()
+		return nil, fmt.Errorf("invalid environment: %s, expected: test, local, dev, prod", env)
 	}
 
-	return log
+	return log, nil
 }
 
 func setupPrettyLogger() *slog.Logger {

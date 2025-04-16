@@ -1,4 +1,4 @@
-env: local
+env: test
 migrations_path: ./migrations
 
 database:
@@ -13,7 +13,8 @@ database:
   attempt_delay: 5s
 
 http_server:
-  addr: :8080
+  host: localhost
+  port: 8080
   timeout: 5s
   idle_timeout: 1m
 

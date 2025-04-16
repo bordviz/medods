@@ -29,7 +29,8 @@ type Database struct {
 }
 
 type HTTPServer struct {
-	Addr        string        `yaml:"addr" env-required:"true"`
+	Host        string        `yaml:"host" env-required:"true"`
+	Port        int           `yaml:"port" env-required:"true"`
 	Timeout     time.Duration `yaml:"timeout" env-required:"true"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-required:"true"`
 }

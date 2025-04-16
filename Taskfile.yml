@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  swagger:
+    description: "Generate Swagger documentation"
+    cmds:
+      - export PATH=$(go env GOPATH)/bin:$PATH && swag init -d "./cmd,./internal/domain/dto,./internal/domain/models,./internal/handlers"

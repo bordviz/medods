@@ -4,8 +4,10 @@ import (
 	"context"
 	"medods/internal/domain/dto"
 	"medods/internal/domain/models"
+	"medods/internal/lib/customerror"
 	authservice "medods/internal/services/auth"
-	"medods/internal/storage/userstorage/usererror"
+	"medods/internal/storage/storageerror"
+	"medods/internal/storage/userstorage"
 	"medods/tests/services/suite"
 	"testing"
 
@@ -43,15 +45,15 @@ var fakeusers []*UserWithTokens = []*UserWithTokens{
 	},
 }
 
-func TestCreateUser(t *testing.T) {
+func TestAuthServiceCreateUser(t *testing.T) {
 	tests := []struct {
 		name string
 		data *UserWithTokens
-		err  error
+		err  customerror.CustomError
 	}{
 		{name: "valid email", data: fakeusers[0]},
 		{name: "second valid email", data: fakeusers[1]},
-		{name: "exists email", data: fakeusers[0], err: usererror.ErrEmailExists},
+		{name: "exists email", data: fakeusers[0], err: userstorage.ErrEmailExists},
 	}
 
 	for _, tt := range tests {
@@ -61,14 +63,14 @@ func TestCreateUser(t *testing.T) {
 			require.Equal(t, tt.err, err)
 
 			if err == nil {
-				require.NotEqual(t, uuid.Nil, id)
-				tt.data.user.ID = id
+				require.NotEqual(t, uuid.Nil, *id)
+				tt.data.user.ID = *id
 			}
 		})
 	}
 }
 
-func TestCreateTokenPair(t *testing.T) {
+func TestAuthServiceCreateTokenPair(t *testing.T) {
 	tests := []struct {
 		name string
 		data *UserWithTokens
@@ -76,7 +78,7 @@ func TestCreateTokenPair(t *testing.T) {
 	}{
 		{name: "valid user", data: fakeusers[0]},
 		{name: "second valid user", data: fakeusers[1]},
-		{name: "user not found", data: &UserWithTokens{user: &models.User{ID: uuid.New()}}, err: usererror.ErrUserNotFound},
+		{name: "user not found", data: &UserWithTokens{user: &models.User{ID: uuid.New()}}, err: storageerror.ErrNotFound},
 	}
 
 	for _, tt := range tests {
@@ -93,7 +95,7 @@ func TestCreateTokenPair(t *testing.T) {
 	}
 }
 
-func TestRefreshToken(t *testing.T) {
+func TestAuthServiceRefreshToken(t *testing.T) {
 	tests := []struct {
 		name      string
 		data      *UserWithTokens

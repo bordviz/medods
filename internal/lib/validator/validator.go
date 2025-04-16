@@ -2,16 +2,30 @@ package validator
 
 import (
 	"fmt"
+	"medods/internal/lib/customerror"
 	"reflect"
 	"strings"
+	"sync"
 
 	"github.com/go-playground/validator/v10"
 )
 
-func Validate(model interface{}) string {
+var (
+	validate *validator.Validate
+	once     sync.Once
+)
+
+func getValidator() *validator.Validate {
+	once.Do(func() {
+		validate = validator.New()
+	})
+	return validate
+}
+
+func Validate(model interface{}) customerror.CustomError {
 	var errMsgs []string
 
-	validate := validator.New()
+	validate := getValidator()
 	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
 		return field.Tag.Get("json")
 	})
@@ -30,7 +44,7 @@ func Validate(model interface{}) string {
 				errMsgs = append(errMsgs, fmt.Sprintf("field %s is not valid", errMsg.Field()))
 			}
 		}
-		return strings.Join(errMsgs, ", ")
+		return customerror.NewCustomError(fmt.Sprintf("validation error: %s", strings.Join(errMsgs, ", ")), 422)
 	}
-	return ""
+	return nil
 }

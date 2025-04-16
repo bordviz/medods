@@ -1,8 +1,13 @@
-FROM golang:1.23
+FROM golang:1.24.1
 
-RUN mkdir /medods
 WORKDIR /medods
 
+COPY go.mod go.sum ./
+RUN go mod tidy
 COPY . .
-RUN chmod a+x docker/*.sh
-ENTRYPOINT ["/medods/docker/app.sh"]
+
+RUN go build -o main cmd/main.go
+
+EXPOSE 8080
+
+CMD ["./main"]

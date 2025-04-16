@@ -1,0 +1,140 @@
+basePath: /
+definitions:
+  dto.User:
+    properties:
+      email:
+        example: test@test.com
+        type: string
+    required:
+    - email
+    type: object
+  models.TokenPair:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+      refresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        type: string
+    type: object
+  response.Response:
+    properties:
+      detail:
+        example: response detail
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Medods API Service
+  version: 2.0.0
+paths:
+  /auth/create_user:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: success response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new user
+      tags:
+      - Auth
+  /auth/get_tokens/{userID}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token pair
+          schema:
+            $ref: '#/definitions/models.TokenPair'
+        "400":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create token pair
+      tags:
+      - Auth
+  /auth/refresh_tokens:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token pair
+          schema:
+            $ref: '#/definitions/models.TokenPair'
+        "400":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: failure response
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Refresh tokens
+      tags:
+      - Auth
+swagger: "2.0"

@@ -3,7 +3,7 @@ package suite
 import (
 	"context"
 	"medods/internal/config"
-	"medods/internal/lib/logger/slogdiscard"
+	"medods/internal/logger"
 	"medods/internal/storage/migrations"
 	"medods/internal/storage/postgres"
 	"medods/internal/storage/userstorage"
@@ -26,7 +26,11 @@ func NewSuite(t *testing.T, configPath string) (*Suite, error) {
 		return nil, err
 	}
 
-	log := slogdiscard.NewDiscardLogger()
+	log, err := logger.NewLogger(cfg.Env)
+	if err != nil {
+		return nil, err
+	}
+
 	db, err := postgres.NewPostgresConnection(context.Background(), log, &cfg.Database)
 	if err != nil {
 		return nil, err

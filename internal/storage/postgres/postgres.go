@@ -15,17 +15,17 @@ import (
 func NewPostgresConnection(ctx context.Context, log *slog.Logger, cfg *config.Database) (*pgxpool.Pool, error) {
 	const op = "storage.postgres.NewPostgresConnection"
 
-	log = with.WithOp(log, op)
+	logger := with.WithOp(log, op)
 
 	dsn := createDSN(cfg)
 
-	pool, err := doWithTries(cfg, log, dsn)
+	pool, err := doWithTries(cfg, logger, dsn)
 	if err != nil {
-		log.Error("failed connect to database", sl.Err(err))
+		logger.Error("failed connect to database", sl.Err(err))
 		return nil, err
 	}
 
-	log.Info("database connection established")
+	logger.Info("database connection established")
 	return pool, nil
 }
 
